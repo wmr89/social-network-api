@@ -15,12 +15,12 @@ const thoughtData = [
     reactions: [],
   },
   {
-    thoughtText: "Fact: Bears eat beets. Bears. Beets. Battlestar Galactica",
+    thoughtText: "Whenever I'm about to do something, I think, 'Would an idiot do that?' And if they would, I do not do that thing.",
     username: "dwight",
     reactions: [],
   },
   {
-    thoughtText: "Identity theft is a crime, Jim!",
+    thoughtText: "Fact: Bears eat beets. Bears. Beets. Battlestar Galactica",
     username: "theRealDwight",
     reactions: [],
   },

@@ -113,7 +113,7 @@ module.exports = {
   async deleteReaction(req, res) {
     try {
       const deletedReaction = await Reaction.findOneAndDelete({
-        _id: req.params.reactionId,
+        reactionId: req.params.reactionId,
       }).select("-__v");
 
       if (!deletedReaction) {

@@ -1,5 +1,5 @@
 const { Schema, Types } = require("mongoose");
-
+//Create Reaction Schema
 const reactionSchema = new Schema({
   reactionId: {
     type: Schema.Types.ObjectId,
@@ -21,12 +21,13 @@ const reactionSchema = new Schema({
   },
 },
 {
+  //Remove _id creation to keep 'reactionID' as only generated ID
   _id: false
 }
 );
-
+//Format date
 function dateFormat(date) {
   return date.toLocaleDateString();
 }
-
+//Export schema
 module.exports = reactionSchema;

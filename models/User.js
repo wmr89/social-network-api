@@ -1,5 +1,5 @@
 const { Schema, model } = require("mongoose");
-
+//create user schema
 const userSchema = new Schema(
   {
     username: {
@@ -11,6 +11,7 @@ const userSchema = new Schema(
       type: String,
       trimmed: true,
       unique: true,
+      //use match to validate email
       match: [/.+@.+\..+/, "Please enter a valid email"],
     },
     thoughts: [
@@ -32,13 +33,13 @@ const userSchema = new Schema(
     },
   }
 );
-
+//Create virtual to create friend count
 userSchema
 .virtual('friendCount')
 .get(function(){
     return this.friends.length
 })
-
+//Create User model
 const User = model('user', userSchema);
 
 module.exports = User;

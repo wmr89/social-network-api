@@ -1,8 +1,8 @@
 const { Schema, model } = require("mongoose");
-//const Reaction = require("./Reaction");
+//import reactionSchema
 const reactionSchema = require("./Reaction");
 
-
+//Create thoughtSchema
 const thoughtSchema = new Schema(
   {
     thoughtText: {
@@ -20,6 +20,7 @@ const thoughtSchema = new Schema(
       default: Date.now,
       get: (createdAtVal) => dateFormat(createdAtVal),
     },
+    //use reactionSchema to create reactions as a subdocument
     reactions: [reactionSchema],
   },
   {
@@ -30,16 +31,16 @@ const thoughtSchema = new Schema(
     id: false,
   }
 );
-
+//format date
 function dateFormat(date) {
   return date.toLocaleDateString();
 }
+//Create virtual for reaction count
+thoughtSchema.virtual("getReactions").get(function () {
+  return this.reactions.length;
+});
 
-thoughtSchema
-  .virtual('getReactions')
-  .get(function () {
-    return this.reactions.length;
-  });
+//Create thought model
 const Thought = model("thought", thoughtSchema);
 
 module.exports = Thought;

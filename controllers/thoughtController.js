@@ -1,7 +1,8 @@
-const { ObjectId } = require("mongoose").Types;
-const { User, Thought, Reaction } = require("../models/");
+//Import User and Thought model
+const { User, Thought} = require("../models/");
 
 module.exports = {
+  //Get all thoughts
   async getThoughts(req, res) {
     try {
       const thoughts = await Thought.find();
@@ -10,6 +11,7 @@ module.exports = {
       res.status(500).json(err);
     }
   },
+  //Get single thought by ID
   async getSingleThought(req, res) {
     try {
       const user = await Thought.findOne({ _id: req.params.thoughtId }).select(
@@ -29,6 +31,7 @@ module.exports = {
   async createThought(req, res) {
     try {
       const dbThoughtData = await Thought.create(req.body);
+      //Add thought ID to user thoughts array
       const user = await User.findOneAndUpdate(
         { username: req.body.username },
         { $addToSet: { thoughts: dbThoughtData } },
@@ -37,7 +40,7 @@ module.exports = {
 
       if (!user) {
         return res.status(404).json({
-          message: "Thought created, but found no user with that ID",
+          message: "Thought created, but no user found with that ID",
         });
       }
       res.json(dbThoughtData);
@@ -49,7 +52,9 @@ module.exports = {
   async updateThought(req, res) {
     try {
       const updatedThought = await Thought.findOneAndUpdate(
+        //find thought with matching ID
         { _id: req.params.thoughtId },
+        //update thought with passed body data
         { $set: req.body },
         { new: true }
       ).select("-__v");
@@ -68,6 +73,7 @@ module.exports = {
   async deleteThought(req, res) {
     try {
       const deletedThought = await Thought.findOneAndDelete({
+        //find thought with matching ID
         _id: req.params.thoughtId,
       }).select("-__v");
 
@@ -75,9 +81,11 @@ module.exports = {
         return res.status(404).json({ message: "No thought with that ID" });
       }
 
-      // Also remove the thought from associated user's thoughts array
+      // Remove thought from associated user thoughts array
       await User.updateOne(
+        //Find user that had matching thoughtID in thoughts array
         { thoughts: req.params.thoughtId },
+        //Delete from thoughts array
         { $pull: { thoughts: req.params.thoughtId } }
       );
 
@@ -91,15 +99,17 @@ module.exports = {
   async createReaction(req, res) {
     try {
       const reaction = await req.body;
+      //Find thought by ID
       const thought = await Thought.findOneAndUpdate(
         { _id: req.params.thoughtId },
+        //add body data as a reaction to the thought
         { $addToSet: { reactions: reaction } },
         { new: true }
       );
 
       if (!thought) {
         return res.status(404).json({
-          message: "Reaction created, but found no thought with that ID",
+          message: "No thought found with that ID",
         });
       }
       res.json(reaction);
@@ -113,7 +123,9 @@ module.exports = {
   async deleteReaction(req, res) {
     try {
       const deletedReaction = await Thought.updateOne(
+        //Find thought by ID
         { _id: req.params.thoughtId },
+        //remove reaction from thought's reactions array
         { $pull: { reactions: {reactionId: req.params.reactionId } }}
       );
 

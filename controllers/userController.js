@@ -1,7 +1,7 @@
-const { ObjectId } = require("mongoose").Types;
 const { User, Thought } = require("../models/");
 
 module.exports = {
+  //Get all users
   async getUsers(req, res) {
     try {
       const users = await User.find();
@@ -10,6 +10,7 @@ module.exports = {
       res.status(500).json(err);
     }
   },
+  //Get user by ID
   async getSingleUser(req, res) {
     try {
       const user = await User.findOne({ _id: req.params.userId }).select(
@@ -37,9 +38,11 @@ module.exports = {
   // Update User
   async updateUser(req, res) {
     try {
+      //Find user by ID and store old information
       const oldUserInfo = await User.findOne({ _id: req.params.userId }).select(
         "-__v"
       );
+      //Update user with information passed in the body
       const updatedUser = await User.findOneAndUpdate(
         { _id: req.params.userId },
         { $set: req.body },
@@ -52,7 +55,9 @@ module.exports = {
 
       // Update associated thoughts
       await Thought.updateMany(
+        //find thoughts with old username
         { username: oldUserInfo.username },
+        //update with new username
         { $set: { username: req.body.username } }
       );
 
@@ -65,6 +70,7 @@ module.exports = {
   // Delete User
   async deleteUser(req, res) {
     try {
+      //Find user by id and delete
       const deletedUser = await User.findOneAndDelete({
         _id: req.params.userId,
       }).select("-__v");
@@ -81,11 +87,13 @@ module.exports = {
       res.status(500).json(err);
     }
   },
-
+//Add new friend
   async addFriend(req, res) {
     try {
       const user = await User.findOneAndUpdate(
+        //Find user by ID
         { _id: req.params.userId },
+        //Add friend ID to user's friends array
         { $addToSet: { friends: req.params.friendId } },
         { new: true }
       );
@@ -103,7 +111,9 @@ module.exports = {
   async removeFriend(req, res) {
     try {
       const user = await User.findOneAndUpdate(
+        //Find user ID
         { _id: req.params.userId },
+        //Remove friendID from user's friends array
         { $pull: { friends: req.params.friendId } },
         { new: true }
       );

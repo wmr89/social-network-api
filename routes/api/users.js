@@ -1,4 +1,5 @@
 const router = require('express').Router();
+//import functions from controllers
 const {
   getUsers,
   getSingleUser,
@@ -11,7 +12,7 @@ const {
 
 
 
-
+//Create routes for associated functions
 router.route('/').get(getUsers).post(createUser);
 
 
